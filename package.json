@@ -1,0 +1,26 @@
+{
+  "name": "gpac-mediainfo",
+  "version": "0.1.0",
+  "description": "NodeJS module that naively wraps mediainfo cli and transforms it's output into JSON usable within your NodeJS app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodolpheFouquet/gpac-mediainfo.git"
+  },
+  "keywords": [
+    "mediainfo",
+    "media",
+    "video",
+    "audio",
+    "gpac"
+  ],
+  "author": "Rodolphe Fouquet <rodolphe.fouquet@gpac-licensing.com> (http://www.gpac-licensing.com/)",
+  "license": "LGPL-2.1",
+  "bugs": {
+    "url": "https://github.com/RodolpheFouquet/gpac-mediainfo/issues"
+  },
+  "homepage": "https://github.com/RodolpheFouquet/gpac-mediainfo#readme"
+}
