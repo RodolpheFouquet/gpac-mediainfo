@@ -1,4 +1,5 @@
 const spawnSync = require('child_process').spawnSync;
+const exec = require('child_process').exec;
 
 
 function parseLine(line, callback) {
@@ -17,40 +18,49 @@ function parseLine(line, callback) {
   } else
     callback(null, matches[1], matches[2]);
 };
+function parseOutput(stdout, callback) {
+  var lines = stdout.toString().split("\n");
+  var output = {};
+
+  output.format = {};
+  output.tracks = [];
+  var isTrack = false;
+  for(var i = 0; i < lines.length; i++) {
+    if(lines[i].length == 0)
+      continue;
+    var line = lines[i];
+    parseLine(line, (err, key, value) => {
+      if(err) {
+        callback(err, output);
+        return;
+      }
+      else if(value) {
+        if(!isTrack)
+          output.format[key.trim()] = value;
+        else
+          output.tracks[output.tracks.length-1][key.trim()] = value;
+      }
+      else {
+        if(key != "General") {
+          isTrack = true;
+          output.tracks.push({ type: key });
+        }
+      }
+    });
+    i++;
+  }
+  callback(null, output);
+}
 
 module.exports = {
+  mediainfo: function(file, callback) {
+    exec('mediainfo ' + file, (error, stdout, stderr) => {
+      parseOutput(stdout, callback);
+    });
+  },
   mediainfoSync: function(file, callback) {
     var output = spawnSync('mediainfo', [file]);
-    var lines = output.stdout.toString().split("\n");
-    var output = {};
-
-    output.format = {};
-    output.tracks = [];
-    var isTrack = false;
-    for(var i = 0; i < lines.length; i++) {
-      if(lines[i].length == 0)
-        continue;
-      var line = lines[i];
-      parseLine(line, (err, key, value) => {
-        if(err)
-          callback(err, output);
-        else if(value) {
-          if(!isTrack)
-            output.format[key.trim()] = value;
-          else
-            output.tracks[output.tracks.length-1][key.trim()] = value;
-        }
-        else {
-          if(key != "General") {
-            isTrack = true;
-            output.tracks.push({ type: key });
-          }
-        }
-      });
-      i++;
-    }
-    callback(null, output);
+    parseOutput(output.stdout, callback);
   }
 
 };
-
